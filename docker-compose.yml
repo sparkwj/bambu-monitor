@@ -1,0 +1,10 @@
+services:
+  # Monitor service - provides real-time printer monitoring
+  monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bambu-monitor
+    container_name: bambu-monitor
+    command: python3 monitor.py
+    restart: unless-stopped

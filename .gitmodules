@@ -1,0 +1,3 @@
+[submodule "Bambu-Lab-Cloud-API"]
+	path = Bambu-Lab-Cloud-API
+	url = ./Bambu-Lab-Cloud-API

@@ -1,0 +1,10 @@
+.bambu_token
+.mijia-api-auth.json
+.vscode/
+__pycache__/
+env/
+venv/
+.venv/
+*.pyc
+.DS_Store
+logs/
