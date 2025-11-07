@@ -4,8 +4,7 @@
 # - Build: docker build --build-arg UBUNTU_VERSION=25.04 -t myimage:latest .
 
 # Choose Ubuntu base (override with --build-arg if needed)
-ARG UBUNTU_VERSION=25.04
-FROM ubuntu:${UBUNTU_VERSION}
+FROM ubuntu
 
 # Keep builds non-interactive
 ARG DEBIAN_FRONTEND=noninteractive
