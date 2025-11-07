@@ -24,7 +24,7 @@ class StatusTracker:
     
     BED_THRESHOLD_TEMP = 40.0  # Degrees Celsius
     SHUTDOWN_DELAY_SECONDS = 4 * 60  # 30 minutes
-    MAX_STATUS_INTERVAL = 10  # 30 minutes
+    MAX_STATUS_INTERVAL = 10  # 10 minutes
 
     bed_temp = 0.0
     nozzle_temp = 0.0
