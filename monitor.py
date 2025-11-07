@@ -17,14 +17,14 @@ def shutdown_printer(reason: str = ""):
         return
     print("Shutdown conditions met({}). Shutting down printer...".format(reason))
     StatusTracker.reset_tracking()
-    os.system(f"python3 -m mijiaAPI -p {MIHOME_AUTH_FILE} set --dev_name {MI_HOME_DEVICE_NAME} --prop_name on --value false")
+    os.system(f"python3 -m mijiaAPI set -p {MIHOME_AUTH_FILE} --dev_name {MI_HOME_DEVICE_NAME} --prop_name on --value false")
 
 class StatusTracker:
     """Track printer status over time"""
     
     BED_THRESHOLD_TEMP = 40.0  # Degrees Celsius
-    SHUTDOWN_DELAY_SECONDS = 4 * 60  # 30 minutes
-    MAX_STATUS_INTERVAL = 10  # 10 minutes
+    SHUTDOWN_DELAY_SECONDS = 15 * 60  # 15 minutes
+    MAX_STATUS_INTERVAL = 5  # 10 minutes
 
     bed_temp = 0.0
     nozzle_temp = 0.0
