@@ -69,6 +69,7 @@ RUN set -eux; \
 # modify to create/activate one and install into it instead.
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 RUN pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn
+RUN pip install -U pip
 
 RUN set -eux; \
 	pip3 install -r /home/${USERNAME}/app/requirements.txt;
