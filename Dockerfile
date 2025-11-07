@@ -67,6 +67,9 @@ RUN set -eux; \
 # Install Python packages from requirements.txt if present. Running this as root
 # writes packages into the system Python environment. If you prefer a virtualenv,
 # modify to create/activate one and install into it instead.
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn
+
 RUN set -eux; \
 	pip3 install -r /home/${USERNAME}/app/requirements.txt;
 
