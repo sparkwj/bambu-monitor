@@ -4,7 +4,8 @@
 # - Build: docker build --build-arg UBUNTU_VERSION=25.04 -t myimage:latest .
 
 # Choose Ubuntu base (override with --build-arg if needed)
-FROM ubuntu
+ARG UBUNTU_VERSION=22.04
+FROM ubuntu:${UBUNTU_VERSION}
 
 # Keep builds non-interactive
 ARG DEBIAN_FRONTEND=noninteractive
@@ -67,10 +68,10 @@ RUN set -eux; \
 # writes packages into the system Python environment. If you prefer a virtualenv,
 # modify to create/activate one and install into it instead.
 RUN set -eux; \
-	pip3 install --break-system-packages -r /home/${USERNAME}/app/requirements.txt;
+	pip3 install -r /home/${USERNAME}/app/requirements.txt;
 
 RUN set -eux; \
-    pip3 install --break-system-packages -e Bambu-Lab-Cloud-API;
+    pip3 install -e Bambu-Lab-Cloud-API;
 
 # Switch to non-root user
 USER ${USERNAME}
