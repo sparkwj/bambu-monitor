@@ -6,5 +6,12 @@ services:
       dockerfile: Dockerfile
     image: bambu-monitor
     container_name: bambu-monitor
+    env_file: .env
     command: python3 monitor.py
-    restart: unless-stopped
+    restart: on-failure
+    healthcheck:
+      test: curl --fail https://localhost:9999||exit 1
+      interval: 15s
+      retries: 1
+      timeout: 1s
+      start-period: 3s

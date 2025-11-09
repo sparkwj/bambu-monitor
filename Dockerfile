@@ -26,14 +26,14 @@ RUN set -eux; \
         python3 \
         python3-pip \
         python3-venv \
-        # common build tools (remove if not needed)
-        build-essential \
         sudo \
         git \
     ; \
     # configure timezone non-interactively
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone; \
     apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+ENV TZ=Asia/Shanghai
 
 # Create a non-root user for better security
 ARG USERNAME=bambu

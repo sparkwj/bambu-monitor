@@ -8,3 +8,6 @@ venv/
 *.pyc
 .DS_Store
 logs/
+*.log
+*.log.*
+.env
