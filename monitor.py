@@ -250,7 +250,6 @@ class PrinterMonitor:
         except KeyboardInterrupt:
             print("\n\nStopping monitor...")
             self.client.disconnect()
-            print(f"Total messages received: {self.message_count}")
 
 
 def main():
