@@ -13,7 +13,7 @@ MIHOME_AUTH_FILE = ".mijia-api-auth.json"
 MI_HOME_DEVICE_NAME = os.getenv("MI_HOME_DEVICE_NAME", "3D打印机")
 
 MAILER_ACCOUNT = os.getenv("MAILER_ACCOUNT", "16889373@qq.com")
-MAILER_PASSWORD = os.getenv("MAILER_ACCOUNT", "")
+MAILER_PASSWORD = os.getenv("MAILER_PASSWORD", "")
 MAILER_HOST_SERVER = os.getenv("MAILER_HOST_SERVER", "smtp.qq.com")
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
