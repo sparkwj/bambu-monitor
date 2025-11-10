@@ -36,6 +36,7 @@ RUN set -eux; \
 ENV TZ=Asia/Shanghai
 
 WORKDIR /app
+COPY . .
 
 # Install Python packages from requirements.txt if present. Running this as root
 # writes packages into the system Python environment. If you prefer a virtualenv,
