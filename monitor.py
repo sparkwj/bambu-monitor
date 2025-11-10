@@ -16,7 +16,7 @@ MAILER_ACCOUNT = os.getenv("MAILER_ACCOUNT", "16889373@qq.com")
 MAILER_PASSWORD = os.getenv("MAILER_PASSWORD", "")
 MAILER_HOST_SERVER = os.getenv("MAILER_HOST_SERVER", "smtp.qq.com")
 
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+LOG_LEVEL = os.getenv("LOG_LEVEL", "DEBUG").upper()
 LOG_FILE = "./monitor.log"
 
 LGO_FORMAT = '%(levelname)s: %(asctime)-15s: %(module)s: %(funcName)s: %(message)s'
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 def shutdown_printer(reason: str = ""):
     """Shut down the p1sc printer"""
-    if StatusTracker.nozzle_temp > 200.0:
+    if StatusTracker.nozzle_temp > 180.0:
         logger.info("Nozzle temperature is still high ({}C). Waiting for nozzle to cool down...".format(StatusTracker.nozzle_temp))
         return
     logger.info("Shutdown conditions met({}). Shutting down printer...".format(reason))
@@ -66,6 +66,9 @@ class MetaStatusTracker(type):
     @property
     def time_since_threshold_nozzle_target(cls):
         return (datetime.now() - cls.threshold_start_nozzle_target).total_seconds()
+    @property
+    def time_since_idle(cls):
+        return (datetime.now() - cls.threshold_since_idle).total_seconds()
 
 class StatusTracker(metaclass=MetaStatusTracker):
     """Track printer status over time"""
@@ -74,23 +77,26 @@ class StatusTracker(metaclass=MetaStatusTracker):
     SHUTDOWN_DELAY_SECONDS = 15 * 60  # 15 minutes
     MAX_STATUS_INTERVAL = 5  # 10 minutes
 
+    print_stage = None
     bed_temp = 0.0
     nozzle_temp = 0.0
     bed_target_temp = None
     nozzle_target_temp = None
+    threshold_since_idle = datetime.now()
     threshold_start_bed = datetime.now()
     threshold_start_bed_target = datetime.now()
     threshold_start_nozzle_target = datetime.now()
-
     status_time = datetime.now()
 
     @classmethod
     def reset_tracking(cls):
         """Reset tracking variables"""
+        cls.print_stage = None
         cls.bed_temp = 0.0
         cls.nozzle_temp = 0.0
         cls.bed_target_temp = None
         cls.nozzle_target_temp = None
+        cls.threshold_since_idle = datetime.now()
         cls.threshold_start_bed = datetime.now()
         cls.threshold_start_bed_target = datetime.now()
         cls.threshold_start_nozzle_target = datetime.now()
@@ -105,10 +111,18 @@ class StatusTracker(metaclass=MetaStatusTracker):
             StatusTracker.reset_tracking()
         StatusTracker.status_time = datetime.now()
         
+        if status.print_stage is not None:
+            StatusTracker.print_stage = status.print_stage
+        if not StatusTracker.print_stage == "IDLE":
+            StatusTracker.threshold_since_idle = datetime.now()
+        
         if status.bed_temp is not None:
             StatusTracker.bed_temp = status.bed_temp
         if StatusTracker.bed_temp > StatusTracker.BED_THRESHOLD_TEMP:
             StatusTracker.threshold_start_bed = datetime.now()
+        
+        if status.nozzle_temp is not None:
+            StatusTracker.nozzle_temp = status.nozzle_temp
         
         if status.bed_target_temp is not None:
             StatusTracker.bed_target_temp = status.bed_target_temp
@@ -119,9 +133,6 @@ class StatusTracker(metaclass=MetaStatusTracker):
             StatusTracker.nozzle_target_temp = status.nozzle_target_temp
         if not StatusTracker.nozzle_target_temp == 0:
             StatusTracker.threshold_start_nozzle_target = datetime.now()
-        
-        if status.nozzle_temp is not None:
-            StatusTracker.nozzle_temp = status.nozzle_temp
     
     @classmethod
     def run_shutdown_strategy(cls):
@@ -137,10 +148,14 @@ class StatusTracker(metaclass=MetaStatusTracker):
         if StatusTracker.nozzle_target_temp == 0 and StatusTracker.time_since_threshold_nozzle_target >= StatusTracker.SHUTDOWN_DELAY_SECONDS:
             shutdown_printer("nozzle_target_temp=0")
             return
+        if StatusTracker.print_stage == "IDLE" and StatusTracker.time_since_idle >= StatusTracker.SHUTDOWN_DELAY_SECONDS:
+            shutdown_printer("nozzle_target_temp=0")
+            return
     
     @classmethod
     def to_dict(cls):
         return {
+            "print_stage": cls.print_stage,
             "bed_temp": cls.bed_temp,
             "nozzle_temp": cls.nozzle_temp,
             "bed_target_temp": cls.bed_target_temp,
@@ -148,9 +163,11 @@ class StatusTracker(metaclass=MetaStatusTracker):
             "threshold_start_bed": cls.threshold_start_bed.strftime("%Y-%m-%d %H:%M:%S"),
             "threshold_start_bed_target": cls.threshold_start_bed_target.strftime("%Y-%m-%d %H:%M:%S"),
             "threshold_start_nozzle_target": cls.threshold_start_nozzle_target.strftime("%Y-%m-%d %H:%M:%S"),
+            "time_since_idle": cls.time_since_idle,
             "time_since_threshold_bed": cls.time_since_threshold_bed,
             "time_since_threshold_bed_target": cls.time_since_threshold_bed_target,
             "time_since_threshold_nozzle_target": cls.time_since_threshold_nozzle_target,
+            "status_time": cls.status_time.strftime("%Y-%m-%d %H:%M:%S"),
         }
 
     @classmethod
@@ -200,7 +217,11 @@ class PrinterMonitor:
     
     def on_message(self, device_id: str, data: dict):
         """Handle incoming MQTT messages"""
+        if self.message_count % 60  == 0:
+            self.client.request_full_status()  # Request full status update
+        
         self.message_count += 1
+        self.message_count = self.message_count % 1000000  # Prevent overflow
         self.last_update = datetime.now()
         
         # Parse status
