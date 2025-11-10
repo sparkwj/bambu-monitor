@@ -10,9 +10,8 @@ services:
     volumes:
       - .:/app
     command: python3 monitor.py
-    restart: on-failure
     healthcheck:
       test: exit 1
       interval: 20s
-      retries: 3
       timeout: 1s
+      retries: 1
