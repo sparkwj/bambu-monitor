@@ -35,34 +35,7 @@ RUN set -eux; \
 
 ENV TZ=Asia/Shanghai
 
-# Create a non-root user for better security
-ARG USERNAME=bambu
-ARG USER_UID=1001
-ARG USER_GID=1001
-RUN set -eux; \
-    groupadd --gid "$USER_GID" "$USERNAME" || true; \
-    useradd --uid "$USER_UID" --gid "$USER_GID" -m "$USERNAME" || true; \
-    mkdir -p /home/$USERNAME/.config && chown -R $USERNAME:$USERNAME /home/$USERNAME; \
-    # allow sudo without password for convenience during builds (remove for production)
-    echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME; \
-    chmod 0440 /etc/sudoers.d/$USERNAME
-
-USER bambu
-
-WORKDIR /home/${USERNAME}/app
-
-# Copy application files into the image workdir and set ownership.
-# IMPORTANT: add a `.dockerignore` at the repo root to exclude build artifacts,
-# node_modules, virtualenvs, secrets, large files, etc. (e.g. .git, .venv, build/)
-COPY --chown=${USERNAME}:${USERNAME} . /home/${USERNAME}/app
-
-# Ensure per-user local bin is available and owned by the non-root user
-# so packages installed with `pip install --user` are found on PATH.
-ENV PATH=/home/${USERNAME}/.local/bin:${PATH}
-
-RUN set -eux; \
-    mkdir -p /home/${USERNAME}/.local/bin; \
-    chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/.local
+WORKDIR /app
 
 # Install Python packages from requirements.txt if present. Running this as root
 # writes packages into the system Python environment. If you prefer a virtualenv,
@@ -75,9 +48,6 @@ RUN set -eux; \
     pip3 install git+https://github.com/sparkwj/Bambu-Lab-Cloud-API.git
 RUN set -eux; \
 	pip3 install -r /home/${USERNAME}/app/requirements.txt;
-
-# Switch to non-root user
-USER ${USERNAME}
 
 # Default command
 CMD ["python3", "-m", "monitor.py"]
