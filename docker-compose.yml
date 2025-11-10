@@ -7,11 +7,12 @@ services:
     image: bambu-monitor
     container_name: bambu-monitor
     env_file: .env
+    volumes:
+      - .:/home/bambu/app
     command: python3 monitor.py
     restart: on-failure
     healthcheck:
-      test: curl --fail https://localhost:9999||exit 1
-      interval: 15s
-      retries: 1
+      test: exit 1
+      interval: 20s
+      retries: 3
       timeout: 1s
-      start-period: 3s

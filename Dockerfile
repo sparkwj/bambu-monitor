@@ -72,10 +72,9 @@ RUN pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn
 RUN pip install -U pip
 
 RUN set -eux; \
-	pip3 install -r /home/${USERNAME}/app/requirements.txt;
-
+    pip3 install git+https://github.com/sparkwj/Bambu-Lab-Cloud-API.git
 RUN set -eux; \
-    pip3 install -e Bambu-Lab-Cloud-API;
+	pip3 install -r /home/${USERNAME}/app/requirements.txt;
 
 # Switch to non-root user
 USER ${USERNAME}

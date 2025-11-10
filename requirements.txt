@@ -1,2 +1,1 @@
--r Bambu-Lab-Cloud-API/requirements.txt
 mijiaAPI
