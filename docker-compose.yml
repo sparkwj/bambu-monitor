@@ -10,8 +10,9 @@ services:
     volumes:
       - .:/app
     command: python3 monitor.py
+    restart: always
     healthcheck:
-      test: exit 1
+      test: curl -sS http://127.0.0.1 || exit 1
       interval: 20s
       timeout: 1s
       start_period: 2s
