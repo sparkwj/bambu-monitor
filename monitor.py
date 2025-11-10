@@ -149,7 +149,7 @@ class StatusTracker(metaclass=MetaStatusTracker):
             shutdown_printer("nozzle_target_temp=0")
             return
         if StatusTracker.print_stage == "IDLE" and StatusTracker.time_since_idle >= StatusTracker.SHUTDOWN_DELAY_SECONDS:
-            shutdown_printer("nozzle_target_temp=0")
+            shutdown_printer("IDLE state")
             return
     
     @classmethod
