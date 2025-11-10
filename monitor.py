@@ -260,7 +260,7 @@ def main():
     devices = client.get_devices()
     device_id = devices[0].get("dev_id")
     
-    StatusTracker.reset_tracking
+    StatusTracker.reset_tracking()
     monitor = PrinterMonitor(
         username=uid,
         access_token=token,
