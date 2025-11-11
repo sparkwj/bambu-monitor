@@ -9,11 +9,13 @@ from dataclasses import dataclass, fields
 from bambulab import BambuClient, MQTTClient, PrinterStatus
 
 device_id = None
-MAX_IDLE_TIME = 15 # in minutes
-MAX_STATUS_INTERVAL = 5 # in minutes
 
 BAMBU_TOKEN_FILE = ".bambu_token"
 MIHOME_AUTH_FILE = ".mijia-api-auth.json"
+
+MAX_STATUS_INTERVAL = 5 # in minutes
+
+MAX_IDLE_TIME = int(os.getenv("MAX_IDLE_TIME", 15)) # in minutes
 
 MI_HOME_DEVICE_NAME = os.getenv("MI_HOME_DEVICE_NAME", "3D打印机")
 
