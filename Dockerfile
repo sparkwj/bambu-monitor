@@ -46,8 +46,6 @@ RUN pip config set global.trusted-host mirrors.ustc.edu.cn
 RUN pip install -U pip
 
 RUN set -eux; \
-    pip3 install git+https://github.com/sparkwj/Bambu-Lab-Cloud-API.git
-RUN set -eux; \
 	pip3 install -r requirements.txt;
 
 # Default command
