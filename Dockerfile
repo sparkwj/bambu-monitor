@@ -35,15 +35,15 @@ RUN set -eux; \
 
 ENV TZ=Asia/Shanghai
 
-WORKDIR /app
-COPY . .
-
 # Install Python packages from requirements.txt if present. Running this as root
 # writes packages into the system Python environment. If you prefer a virtualenv,
 # modify to create/activate one and install into it instead.
 RUN pip config set global.index-url https://mirrors.ustc.edu.cn/pypi/simple/
 RUN pip config set global.trusted-host mirrors.ustc.edu.cn
 RUN pip install -U pip
+
+WORKDIR /app
+COPY . .
 
 RUN set -eux; \
 	pip3 install -r requirements.txt;
