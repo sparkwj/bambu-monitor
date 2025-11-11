@@ -26,7 +26,7 @@ LOG_FILE = "./monitor.log"
 
 LOG_FORMAT = '%(levelname)-6s %(asctime)-8s %(module)s - %(funcName)s: %(message)s'
 log_formatter = logging.Formatter(LOG_FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
-log_handler = RotatingFileHandler(LOG_FILE, mode='a', maxBytes=5 * 1024 * 1024, backupCount=2, encoding=None, delay=0)
+log_handler = RotatingFileHandler(LOG_FILE, mode='a', maxBytes=50 * 1024 * 1024, backupCount=2, encoding=None, delay=0)
 log_handler.setFormatter(log_formatter)
 log_level = getattr(logging, LOG_LEVEL, logging.INFO)
 logging.basicConfig(level=log_level, handlers=[log_handler])
@@ -133,6 +133,8 @@ class StatusTracker:
             cls.reset_tracking()
         logger.debug("idle time: {}".format(datetime.now() - cls.last_active_time))
         logger.debug("receive status: \n" + pprint.pformat(status) + "\n")
+        cls.last_statustime = datetime.now()
+        # Deep update status
         deep_update_dataclass(cls.status, status)
         # Check for activity
         if cls.status.print_stage is not None and cls.status.print_stage != "IDLE" \
