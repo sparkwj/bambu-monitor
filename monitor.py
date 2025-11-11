@@ -36,9 +36,9 @@ logger = logging.getLogger(__name__)
 def shutdown_printer(reason: str = ""):
     """Shut down the p1sc printer"""
     logger.info("#" * 60)
-    logger.info("Shutdown conditions met. Shutting down printer...\n{}".format(reason))
+    logger.info("Shutdown conditions met. Shutting down printer...")
     StatusTracker.reset_tracking()
-    os.system(f"python3 -m mijiaAPI set -p {MIHOME_AUTH_FILE} --dev_name {MI_HOME_DEVICE_NAME} --prop_name on --value false")
+    os.system(f"python3 -m mijiaAPI set -p {MIHOME_AUTH_FILE} --dev_name {MI_HOME_DEVICE_NAME} --prop_name on --value false  > /dev/null")
     send_email(
         title="Bambu Printer Shutdown",
         content="The Bambu printer has been shut down automatically due to inactivity ({}).".format(reason)
@@ -193,10 +193,10 @@ class PrinterMonitor:
 
     def start(self):
         """Start monitoring"""
-        print("*" * 29)
-        print("* Bambu Lab Printer Monitor *")
-        print(f"* Device ID {self.device_id} *")
-        print("*" * 29)
+        print()
+        print("Bambu Printer Monitor")
+        print(f"Device ID: {self.device_id}")
+        print("Watching ...")
         print()
 
         try:
