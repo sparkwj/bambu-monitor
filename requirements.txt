@@ -1,2 +1,2 @@
-git+https://github.com/sparkwj/Bambu-Lab-Cloud-API.git
+bambulab @ git+https://github.com/sparkwj/Bambu-Lab-Cloud-API.git
 mijiaAPI
