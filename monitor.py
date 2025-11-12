@@ -140,7 +140,6 @@ class StatusTracker:
         deep_update_dataclass(cls.status, status)
         # Check for activity
         if cls.status.print_stage is not None and cls.status.print_stage not in ("IDLE", "FINISH") \
-            or cls.status.bed_temp is not None and cls.status.bed_temp > 50.0 \
             or cls.status.bed_target_temp is not None and cls.status.bed_target_temp != 0 \
             or cls.status.nozzle_temp is not None and cls.status.nozzle_temp > 100.0 \
             or cls.status.nozzle_target_temp is not None and cls.status.nozzle_target_temp > 0:
