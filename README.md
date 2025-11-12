@@ -2,7 +2,6 @@
 
 ## based on these conditions
 * print stage IDEL
-* bed temporature < 50
 * bed target temporature = 0
 * nozzle temporature < 100
 * nozzle target temporature = 0
