@@ -95,7 +95,7 @@ def deep_update_dataclass(target: Any, source: Any) -> None:
         if target_value is None and source_value is not None:
             setattr(target, field.name, source_value)
             continue
-        if target_value is not None and not source_value:
+        if target_value is not None and source_value is None:
             continue
         # print(field.name, target_value, source_value)
         if source_value is not None:
@@ -138,6 +138,7 @@ class StatusTracker:
         cls.last_statustime = datetime.now()
         # Deep update status
         deep_update_dataclass(cls.status, status)
+        logger.debug("current status: \n" + pprint.pformat(cls.status) + "\n")
         # Check for activity
         if cls.status.print_stage is not None and cls.status.print_stage not in ("IDLE", "FINISH") \
             or cls.status.bed_target_temp is not None and cls.status.bed_target_temp != 0 \
