@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 from typing import Any
 from dataclasses import dataclass, fields
+from mijiaAPI import mijiaDevice, mijiaAPI
 from bambulab import BambuClient, MQTTClient, PrinterStatus
 
 device_id = None
@@ -40,7 +41,20 @@ def shutdown_printer(reason: str = ""):
     logger.info("#" * 60)
     logger.info("Shutdown conditions met. Shutting down printer...")
     StatusTracker.reset_tracking()
-    os.system(f"python3 -m mijiaAPI set -p {MIHOME_AUTH_FILE} --dev_name {MI_HOME_DEVICE_NAME} --prop_name on --value false  > /dev/null")
+
+    with open(MIHOME_AUTH_FILE).re as f:
+        auth = json.load(f)
+    try:
+        api = mijiaAPI(auth)
+        device = mijiaDevice(api, dev_name=MI_HOME_DEVICE_NAME)
+        device.set("on", "false")
+    except Exception as e:
+        logger.error("Exec shutdown error", exc_info=True)
+        send_email(
+            title="mijiaAPI error when shutdown printer",
+            content=str(e)
+            )
+    # os.system(f"python3 -m mijiaAPI set -p {MIHOME_AUTH_FILE} --dev_name {MI_HOME_DEVICE_NAME} --prop_name on --value false  > /dev/null")
     send_email(
         title="Bambu Printer Shutdown",
         content="The Bambu printer has been shut down automatically due to inactivity ({}).".format(reason)
