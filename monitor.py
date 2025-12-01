@@ -42,10 +42,8 @@ def shutdown_printer(reason: str = ""):
     logger.info("Shutdown conditions met. Shutting down printer...")
     StatusTracker.reset_tracking()
 
-    with open(MIHOME_AUTH_FILE) as f:
-        auth = json.load(f)
     try:
-        api = mijiaAPI(auth)
+        api = mijiaAPI(MIHOME_AUTH_FILE)
         device = mijiaDevice(api, dev_name=MI_HOME_DEVICE_NAME)
         device.set("on", "false")
     except Exception as e:
