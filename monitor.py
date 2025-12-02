@@ -152,9 +152,9 @@ class StatusTracker:
         deep_update_dataclass(cls.status, status)
         logger.debug("current status: \n" + pprint.pformat(cls.status) + "\n")
         # Check for activity
-        if cls.status.print_stage is not None and cls.status.print_stage not in ("IDLE", "FINISH") \
+        if cls.status.print_stage is not None and cls.status.print_stage not in ("IDLE", "FINISH", "FAILED") \
             or cls.status.bed_target_temp is not None and cls.status.bed_target_temp != 0 \
-            or cls.status.nozzle_temp is not None and cls.status.nozzle_temp > 100.0 \
+            or cls.status.nozzle_temp is not None and cls.status.nozzle_temp > 85.0 \
             or cls.status.nozzle_target_temp is not None and cls.status.nozzle_target_temp > 0:
             # Update last active time
             cls.last_active_time = datetime.now()
