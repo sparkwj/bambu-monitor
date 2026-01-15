@@ -55,7 +55,7 @@ def shutdown_printer(reason: str = ""):
     # os.system(f"python3 -m mijiaAPI set -p {MIHOME_AUTH_FILE} --dev_name {MI_HOME_DEVICE_NAME} --prop_name on --value false  > /dev/null")
     send_email(
         title="Bambu Printer Shutdown",
-        content="The Bambu printer has been shut down automatically due to inactivity ({}).".format(reason)
+        content="The Bambu printer has been shut down automatically due to inactivity{}.".format(reason)
         )
 
 def send_email(title, content):
@@ -162,11 +162,12 @@ class StatusTracker:
         # Check for idle timeout and run shutdown if needed
         if datetime.now() - cls.last_active_time > timedelta(minutes=MAX_IDLE_TIME):
             logger.info(pprint.pformat(cls.status))
-            shutdown_printer("print_stage={}, bed_temp={}, bed_target_temp={}, nozzle_temp={}, nozzle_target_temp={}".format(
-                cls.status.print_stage,
-                cls.status.bed_temp, cls.status.bed_target_temp,
-                cls.status.nozzle_temp, cls.status.nozzle_target_temp
-            ))
+            shutdown_printer()
+            # shutdown_printer(" (print_stage={}, bed_temp={}, bed_target_temp={}, nozzle_temp={}, nozzle_target_temp={})".format(
+            #     cls.status.print_stage,
+            #     cls.status.bed_temp, cls.status.bed_target_temp,
+            #     cls.status.nozzle_temp, cls.status.nozzle_target_temp
+            # ))
 
 class PrinterMonitor:
     """Monitor printer status with formatted output"""
